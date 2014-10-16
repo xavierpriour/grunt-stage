@@ -27,22 +27,16 @@ exports.stage = {
     // setup here if necessary
     done();
   },
-  default_options: function(test) {
+
+  // stage:<stage> simple loading
+  testLoad5: function(test) {
     test.expect(1);
-
-    var actual = grunt.file.read('tmp/default_options');
-    var expected = grunt.file.read('test/expected/default_options');
-    test.equal(actual, expected, 'should describe what the default behavior is.');
-
-    test.done();
-  },
-  custom_options: function(test) {
-    test.expect(1);
-
-    var actual = grunt.file.read('tmp/custom_options');
-    var expected = grunt.file.read('test/expected/custom_options');
-    test.equal(actual, expected, 'should describe what the custom option(s) behavior is.');
-
+    var expected = grunt.file.readJSON('test/fixtures/local.json');
+    expected.stage = 'local5';
+    var actual = grunt.config('stg');
+    // we're not concerned with test debug info.
+    delete actual.test;
+    test.deepEqual(actual, expected, 'stage:<stage> should put file content in grunt.config(\'stg\').');
     test.done();
   },
 };

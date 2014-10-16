@@ -1,0 +1,8 @@
+{
+  // I love json5 syntax
+  label: "hello world",
+  db: {
+    user: "me\
+",
+  }
+}
