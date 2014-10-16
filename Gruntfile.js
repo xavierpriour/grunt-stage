@@ -33,7 +33,7 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     stage: {
       options: {
-        dir:'test/fixtures/',
+        dir:'test/fixtures',
         test: true,
       },
     },

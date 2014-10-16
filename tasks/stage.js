@@ -28,7 +28,7 @@ module.exports = function(grunt) {
   /*
    * default folder for stage files. Overridden by options.dir
    */
-  var defaultDir = 'config/secret/';
+  var defaultDir = 'config/secret';
   var defaultTest = false;
 
   grunt.config(stgKey, {});
@@ -136,7 +136,7 @@ module.exports = function(grunt) {
      * This function does NOT check that the file is readable.
      */
     var isStage = function(stage) {
-      var fileStart = options.dir+stage;
+      var fileStart = options.dir+'/'+stage;
       for(var ext in input) {
         if(grunt.file.exists(fileStart+'.'+ext)) {
           return true;
@@ -152,7 +152,7 @@ module.exports = function(grunt) {
      * Throws up a fail if a .json5 file was found but the JSON5 library is not installed.
      */
     var loadFile = function(stage) {
-      var fileStart = options.dir+stage;
+      var fileStart = options.dir+'/'+stage;
       for(var ext in input) {
         if(grunt.file.exists(fileStart+'.'+ext)) {
           return input[ext].read(fileStart+'.'+ext);
