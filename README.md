@@ -143,7 +143,7 @@ Then `stage:production:build` will minify, but `stage:dev:build` won't.
 If that syntax is used before any stage is loaded, it fails in error.
 
 #### stage:\<stage\>:\<task\>:\<optional arguments\>
-Shortcut for [stage:\<stage\>, \<task\>:\<optional arguments\>].
+Shortcut for `[stage:<stage>, <task>:<optional arguments>]`.
 
 Loads a stage, and then execute the specified task.
 Beware that the stage stays loaded for later tasks,
