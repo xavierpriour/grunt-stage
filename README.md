@@ -75,15 +75,15 @@ The names of the files will be the names of the stages, so choose wisely
 There are two main ways of using stages:
 - running the same target, with different values depending on the stage.
 For example, deploying the code to different servers in production and testing.
-This is done using `'<%= stg.<key> %>'` notation in the target definition.
+This is done using `'<%= stg.KEY %>'` notation in the target definition.
 - running different tasks or targets depending on the stage. For example,
 minify code for production but not for local development.
-This is done by calling `stage:<task>` instead of `<task>`.
+This is done by calling `stage:TASK` instead of `TASK`.
 
 There are also two different ways of setting which stage you want to use:
-- call the task with `stage:<stage>:<task>`, for example `stage:production:deploy`.
+- call the task with `stage:STAGE:TASK`, for example `stage:production:deploy`.
 This is especially useful to select a stage on the command line.
-- loading a stage as a first task (by calling `stage:<stage>`), then calling other tasks directly.
+- loading a stage as a first task (by calling `stage:STAGE`), then calling other tasks directly.
 For example:
 `grunt.registerTask('production', ['stage:production', 'clean', 'build', 'deploy']);`.
 This is more useful to define "super-tasks" in your Gruntfile.
@@ -98,7 +98,7 @@ depending on the nature of arg1.
 The task will first try to recognize arg1 as a command, then as a stage, then as a task - in that order.
 So **beware of name collisions**, don't name your stages with the same name as a command or task.
 
-#### stage:\<command\>
+#### stage:COMMAND
 The task recognizes 3 commands:
 - `stage:clear` removes all stage info. Useful if you're doing multiple deployments in a single task:
 `grunt.registerTask('deploy_tests', ['stage:test1', 'deploy', 'stage:clear', 'stage:test2', 'deploy']);`.
@@ -107,11 +107,11 @@ The task recognizes 3 commands:
 Use it before tasks that need stage data, to avoid any weird behavior.
 For example: `grunt.registerTask('deploy', ['stage:require', 'build', 'ftp-deploy']);`.
 
-#### stage:\<stage\>
+#### stage:STAGE
 Loads a stage, for later use.
 
-The task looks for `<stage>.json` in `options.dir` folder.
-If the file does not exist, it then looks for `<stage>.json5` in the same folder.
+The task looks for `STAGE.json` in `options.dir` folder.
+If the file does not exist, it then looks for `STAGE.json5` in the same folder.
 It then loads the file info (or throw an error, if a json5 file is found but the library is not installed).
 The info will then be accessible in the `grunt.config` object under the key `'stg'`.
 
@@ -120,8 +120,8 @@ This syntax is mostly used at the start of a list of tasks, for example:
 grunt.registerTask('production', ['stage:production', 'clean', 'build', 'deploy']);
 ```
 
-#### stage:\<task\>:\<optional arguments\>
-Conditional target: if it exists, executes \<task\>:\<stage\>. Otherwise, does nothing .
+#### stage:TASK:OPTIONAL_ARGUMENTS
+Conditional target: if it exists, executes TASK:STAGE. Otherwise, does nothing .
 
 This task looks for the specified task in the Gruntfile,
 and then searches for a target with the same name as the current stage
@@ -142,8 +142,8 @@ Then `stage:production:build` will minify, but `stage:dev:build` won't.
 
 If that syntax is used before any stage is loaded, it fails in error.
 
-#### stage:\<stage\>:\<task\>:\<optional arguments\>
-Shortcut for `[stage:<stage>, <task>:<optional arguments>]`.
+#### stage:STAGE:TASK:OPTIONAL_ARGUMENTS
+Shortcut for `[stage:STAGE, TASK:OPTIONAL_ARGUMENTS]`.
 
 Loads a stage, and then execute the specified task.
 Beware that the stage stays loaded for later tasks,
