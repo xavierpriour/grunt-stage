@@ -102,6 +102,7 @@ module.exports = function(grunt) {
       '': {
         public: false,
         run: function() {
+          grunt.log.writeln('skipping');
           // do nothing
         }
       }
@@ -230,7 +231,6 @@ module.exports = function(grunt) {
         // just skip
         grunt.log.debug("no stage targets for task '"+arg1+"' and stage '"+stage+"', skipping it");
       }
-      return;
     }
     // 2.d. we don't know what to do with arg1 > fail!
     else {

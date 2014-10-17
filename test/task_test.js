@@ -30,16 +30,17 @@ exports.stage = {
 
   // stage:<stage> simple loading
   testTask: function(test) {
-    test.expect(2);
+    test.expect(3);
     var expected = {
       cmd: {
         command: 'loadAndRun',
-        args: [null, 'clean:local'],
+        args: [null, 'testTask:local'],
       }
     };
     var actual = grunt.config('stg.test');
     test.deepEqual(actual, expected, 'stage:<task> should execute <task>:<stage> when it exists.');
     test.equal(grunt.config('stg.stage'), 'local', "stage 'local' should be loaded");
+    test.ok(grunt.file.exists('tmp/local'), 'task testTask:local should have run and created file');
     test.done();
   },
 };

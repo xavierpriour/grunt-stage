@@ -163,7 +163,7 @@ Type: `Boolean`
 
 Default value: `false`
 
-If set to `true`, the task will log a bunch of debug information in `grunt.config.stg.test`,
+If set to `true`, the task will log a bunch of debug information in `stg.test`,
 and will NOT fail on errors.
 Only use for task testing - see examples in the `test` folder.
 
@@ -179,6 +179,10 @@ Only use for task testing - see examples in the `test` folder.
 9. enjoy the love
 
 ## Release History
+__1.0.3__
+
+  * bugfix: 'stage:TASK' did not actually run the task.
+
 __1.0.0__
 
   * first public version.

@@ -11,6 +11,8 @@
 module.exports = function(grunt) {
   require('load-grunt-tasks')(grunt); // Load grunt tasks automatically
 
+  var tmp = 'tmp/';
+
   // Project configuration.
   grunt.initConfig({
     jshint: {
@@ -24,10 +26,11 @@ module.exports = function(grunt) {
       }
     },
 
-    // This plugin does not generate any files, we're just using 'clean' as a test task!
-    clean: {
+    clean: [tmp],
+
+    testTask: {
       local: {},
-      other:{},
+      other: {},
     },
 
     // Configuration to be run (and then tested).
@@ -57,10 +60,13 @@ module.exports = function(grunt) {
   grunt.registerTask('_testClear', ['stage:local', 'stage:clear', 'nodeunit:one:clear']);
   grunt.registerTask('_testRequire', ['stage:clear', 'stage:local', 'stage:require', 'nodeunit:one:require']);
   grunt.registerTask('_testRequireKO', ['stage:clear', 'stage:require', 'nodeunit:one:requireKO']);
-  grunt.registerTask('_testTask', ['stage:clear', 'stage:local', 'stage:clean', 'nodeunit:one:task']);
-  grunt.registerTask('_testTaskNone', ['stage:clear', 'stage:localNone', 'stage:clean', 'nodeunit:one:taskNone']);
-  grunt.registerTask('_testStageTask', ['stage:clear', 'stage:local:clean', 'nodeunit:one:stageTask']);
-  grunt.registerTask('_testStageTaskTarget', ['stage:clear', 'stage:local:clean:other', 'nodeunit:one:stageTaskTarget']);
+  grunt.registerTask('_testTask', ['clean', 'stage:clear', 'stage:local', 'stage:testTask', 'nodeunit:one:task']);
+  grunt.registerTask('_testTaskNone', ['stage:clear', 'stage:localNone', 'stage:testTask', 'nodeunit:one:taskNone']);
+  grunt.registerTask('_testStageTask', ['stage:clear', 'stage:local:testTask', 'nodeunit:one:stageTask']);
+  grunt.registerTask('_testStageTaskTarget', ['stage:clear', 'stage:local:testTask:other', 'nodeunit:one:stageTaskTarget']);
+
+  grunt.registerTask('build', ['stage:testTask']);
+  grunt.registerTask('_testChain', ['clean', 'stage:clear', 'stage:local', 'build', 'nodeunit:one:task']);
 
   // Let's make a task to run all _test*
   grunt.registerTask('testAll', 'runs all _test* tasks', function(){
@@ -70,6 +76,13 @@ module.exports = function(grunt) {
         console.log(name);
       }
     }
+  });
+
+  // this tasks create a file with the name of the target that was called
+  // => makes it easy to test the task was actually run
+  grunt.registerMultiTask('testTask', 'a test task to ensure grunt-stage runs properly', function(){
+    grunt.log.writeln(this.target + ': ' + this.data);
+    grunt.file.write(tmp+this.target, (new Date()).toString());
   });
 
   // By default, lint and run all tests.
