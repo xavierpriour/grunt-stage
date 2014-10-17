@@ -102,7 +102,7 @@ module.exports = function(grunt) {
       '': {
         public: false,
         run: function() {
-          grunt.log.writeln('skipping');
+          grunt.log.debug('skipping');
           // do nothing
         }
       }
