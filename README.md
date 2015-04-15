@@ -1,6 +1,6 @@
 # grunt-stage
 
-> Grunt task to easily manage building and deploying to various stages (environments), inspired by [Capistrano](http://capistranorb.com/).
+Grunt task to easily manage building and deploying to various stages (environments), inspired by [Capistrano](http://capistranorb.com/).
 
 **Synopsis:**
 
@@ -14,7 +14,7 @@ Then you can run `stage:testing:deploy` or `stage:production:deploy` to deploy (
 - adding another stage (another testing stage, a beta server, etc...) is quick and painless: just add another json config file.
 - sensitive data (host, user, password,...) are centralized, outside your Gruntfile: data stay out of source control, Gruntfile stays in.
 
-** Quick start:**
+**Quick start:**
 
 ```shell
 npm install grunt-stage --save-dev

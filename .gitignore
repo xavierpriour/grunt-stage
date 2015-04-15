@@ -1,3 +1,6 @@
+# managed packages
 node_modules
+
+#build artifacts
 npm-debug.log
 tmp
