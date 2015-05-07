@@ -4,7 +4,7 @@
  *
  * Loads stage-dependent info in the 'stg' config variable.
  * This info can then be fed into other tasks config using '<%= stg.xxx%>' syntax.
- * 
+ *
  * Acceptable targets/arguments:
  * - stage:<stage> loads the info. Use as first task in a task list.
  * - stage:<stage>:<task>:<target/arguments> loads the info then runs the supplied task
@@ -35,7 +35,7 @@ module.exports = function(grunt) {
 
   grunt.registerTask('stage', 'Loads stage-specific environment.', function(arg1, arg2, arg3) {
     var setTest = function(key, value) {
-      if(!options.test) {
+      if (!options.test) {
         return;
       }
       // grunt.config([stgKey, testKey, grunt.task.current.nameArgs, key], value);
@@ -47,7 +47,7 @@ module.exports = function(grunt) {
      */
     var failUnlessTest = function(msg) {
       setTest(failKey, msg);
-      if(options.test) {
+      if (options.test) {
         // do NOT fail in testing
         return;
       }
@@ -75,15 +75,17 @@ module.exports = function(grunt) {
         public: true,
         run: function() {
           var stg = grunt.config(stgKey);
-          if(!stg || !stg.stage) {
-            failUnlessTest("stage must be set before that point, fix it by calling stage:<stage> in your tasks before.");
+          if (!stg || !stg.stage) {
+            failUnlessTest(
+              'stage must be set before that point, fix it by calling stage:<stage> in your tasks before.'
+            );
           }
         }
       },
       'loadAndRun': {
         public: false,
         run: function(stage, toRun) {
-          if(stage) {
+          if (stage) {
             var data;
             if (data = loadFile(stage)) {
               for (var attrname in data) {
@@ -91,10 +93,10 @@ module.exports = function(grunt) {
               }
               grunt.config([stgKey, 'stage'], arg1);
             } else {
-              failUnlessTest("unable to load requested stage '"+stage+"'.");
+              failUnlessTest("unable to load requested stage '" + stage + "'.");
             }
           }
-          if(toRun) {
+          if (toRun) {
             grunt.task.run(toRun);
           }
         }
@@ -124,8 +126,10 @@ module.exports = function(grunt) {
             var filepath = path.resolve(process.cwd(), fileName);
             var raw = fs.readFileSync(filepath, 'utf8');
             return json5.parse(raw);
-          } catch(err) {
-            failUnlessTest("found stage config in json5 format but missing libary, please install with: npm install json5 --save-dep");
+          } catch (err) {
+            failUnlessTest(
+              'found stage config in json5 format but missing libary, please install with: npm install json5 --save-dep'
+            );
           }
         }
       }
@@ -137,9 +141,9 @@ module.exports = function(grunt) {
      * This function does NOT check that the file is readable.
      */
     var isStage = function(stage) {
-      var fileStart = options.dir+'/'+stage;
-      for(var ext in input) {
-        if(grunt.file.exists(fileStart+'.'+ext)) {
+      var fileStart = options.dir + '/' + stage;
+      for (var ext in input) {
+        if (grunt.file.exists(fileStart + '.' + ext)) {
           return true;
         }
       }
@@ -153,10 +157,10 @@ module.exports = function(grunt) {
      * Throws up a fail if a .json5 file was found but the JSON5 library is not installed.
      */
     var loadFile = function(stage) {
-      var fileStart = options.dir+'/'+stage;
-      for(var ext in input) {
-        if(grunt.file.exists(fileStart+'.'+ext)) {
-          return input[ext].read(fileStart+'.'+ext);
+      var fileStart = options.dir + '/' + stage;
+      for (var ext in input) {
+        if (grunt.file.exists(fileStart + '.' + ext)) {
+          return input[ext].read(fileStart + '.' + ext);
         }
       }
       return false;
@@ -176,71 +180,72 @@ module.exports = function(grunt) {
     setTest(cmdKey, cmd);
     var task;
     // 2.a. is arg1 a command?
-    if(actions[arg1] && actions[arg1].public) {
+    if (actions[arg1] && actions[arg1].public) {
       cmd.command = arg1;
-      if(typeof arg2 !== 'undefined') {
+      if (typeof arg2 !== 'undefined') {
         cmd.args.push(arg2);
       }
-      if(typeof arg3 !== 'undefined') {
+      if (typeof arg3 !== 'undefined') {
         cmd.args.push(arg3);
       }
-    }
-    // 2.b. is arg1 a stage?
-    else if(isStage(arg1)) {
+    } else if (isStage(arg1)) {
+      // 2.b. is arg1 a stage?
       // we load arg1 as stage
       cmd.command = 'loadAndRun';
       cmd.args.push(arg1);
       // if arg2 and arg3 are present, we will run them > no check done on them!
-      if(arg2) {
+      if (arg2) {
         task = arg2;
-        if(arg3) {
-          task += ':'+arg3;
+        if (arg3) {
+          task += ':' + arg3;
         }
         cmd.args.push(task);
-        // if(grunt.task.exists(arg2)) {
+        // if (grunt.task.exists(arg2)) {
         //   task = arg2;
-        //   if(arg3) {
-        //     task += ':'+arg3;
+        //   if (arg3) {
+        //     task += ':' + arg3;
         //   }
-        //   grunt.log.debug("'"+arg1+"' stage running '"+task+"'");
+        //   grunt.log.debug("'" + arg1 + "' stage running '" + task + "'");
         //   cmd.args.push(task);
         // } else {
-        //   failUnlessTest("correct syntax is stage:<stage>:<task>, but '"+arg2+"' is not a task name.");
+        //   failUnlessTest("correct syntax is stage:<stage>:<task>, but '" + arg2 + "' is not a task name.");
         // }
       }
-    }
-    // 2.c. is arg1 a task?
-    else if (grunt.task.exists(arg1)) {
+    } else if (grunt.task.exists(arg1)) {
+      // 2.c. is arg1 a task?
       // only valid if a stage has already been loaded
       var stage = grunt.config([stgKey, 'stage']);
-      if(!stage) {
-        failUnlessTest("stage must be set before calling stage:<task>, fix it by calling stage:<stage> before.");
+      if (!stage) {
+        failUnlessTest(
+          'stage must be set before calling stage:<task>, fix it by calling stage:<stage> before.'
+        );
       }
       // task target to run = stage name - does it exist?
       var target = grunt.config.get([arg1, stage]);
-      if(target) {
-        cmd.command='loadAndRun';
+      if (target) {
+        cmd.command = 'loadAndRun';
         cmd.args.push(null); // do not load anything
-        task = arg1+':'+stage;
-        if(arg3) {
-          task += ':'+arg3;
+        task = arg1 + ':' + stage;
+        if (arg3) {
+          task += ':' + arg3;
         }
-        grunt.log.debug("'"+stage+"' stage running '"+task+"'");
+        grunt.log.debug('"' + stage + '" stage running "' + task + '"');
         cmd.args.push(task);
       } else {
         // just skip
-        grunt.log.debug("no stage targets for task '"+arg1+"' and stage '"+stage+"', skipping it");
+        grunt.log.debug('no stage targets for task "' + arg1 + '" and stage "' + stage + '", skipping it');
       }
-    }
-    // 2.d. we don't know what to do with arg1 > fail!
-    else {
-      failUnlessTest("incorrect arguments supplied to stage task, '"+arg1+"' should be either a stage (in folder '"+options.dir+"') or a task name.");
+    } else {
+      // 2.d. we don't know what to do with arg1 > fail!
+      failUnlessTest(
+        'incorrect arguments supplied to stage task, "' +
+        arg1 + '" should be either a stage (in folder "' + options.dir + '") or a task name.');
       return;
     }
     // 3. execute cmd object
-    grunt.log.debug("Command is "+JSON.stringify(cmd, null, 2));
+    grunt.log.debug('Command is ' + JSON.stringify(cmd, null, 2));
     var result;
-    switch(cmd.args.length) {
+    switch (cmd.args.length) {
       case 0:
         result = actions[cmd.command].run();
         break;

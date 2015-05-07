@@ -32,7 +32,7 @@ exports.stage = {
   testWrong: function(test) {
     test.expect(1);
     var actual = grunt.config('stg.test.fail');
-    test.ok(actual.length>1, 'load on incorrect stage/task should fail.');
+    test.ok(actual.length > 1, 'load on incorrect stage/task should fail.');
     test.done();
   },
 };

@@ -34,7 +34,7 @@ exports.stage = {
     var stg = grunt.config('stg');
     test.ok(stg.test.fail, 'stage:<stage>:<task> should fail when <task> does not exist.');
     delete stg.test;
-    test.deepEqual(stg, {}, "stage:<stage>:<task> should not load anything when <task> does not exist.");
+    test.deepEqual(stg, {}, 'stage:<stage>:<task> should not load anything when <task> does not exist.');
     test.done();
   },
 };
