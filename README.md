@@ -194,6 +194,10 @@ Only use for task testing - see examples in the `test` folder.
 9. enjoy the love
 
 ## Release History
+__1.0.6__
+
+  * npm version bump
+
 __1.0.5__
 
   * feature: added 'stage:block:STAGE'

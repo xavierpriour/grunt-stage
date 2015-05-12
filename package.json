@@ -1,7 +1,7 @@
 {
   "name": "grunt-stage",
   "description": "Grunt task to easily manage building and deploying to various stages (environments), inspired by Capistrano.",
-  "version": "1.0.4",
+  "version": "1.0.6",
   "homepage": "https://github.com/xavierpriour/grunt-stage",
   "author": {
     "name": "Xavier Priour",
