@@ -15,7 +15,7 @@ module.exports = function(grunt) {
   var jsFiles = [
     'Gruntfile.js',
     'tasks/*.js',
-    '<%= nodeunit.tests %>'
+    'test/*.js'
   ];
 
   // Project configuration.
@@ -51,8 +51,10 @@ module.exports = function(grunt) {
 
     // Unit tests.
     nodeunit: {
-      tests: ['test/*_test.js'],
-      one: ['test/<%= grunt.task.current.args[0] %>_test.js'],
+      one: ['test/<%= grunt.task.current.args[0] %>.js'],
+      stageLocalIsLoaded: 'test/stageLocalIsLoaded.js',
+      hasFailed: 'test/hasFailed.js',
+      stageShouldBeEmpty: 'test/stageIsEmpty_test.js',
     }
 
   });
@@ -62,44 +64,97 @@ module.exports = function(grunt) {
 
   // Due to the nature of the plugin, we can't put all tests into one task,
   // we need separate task paths to test all cases.
-  grunt.registerTask('_testLoad',
-    ['stage:clear', 'stage:local', 'nodeunit:one:localLoaded']);
-  grunt.registerTask('_testLoadJSON5',
-    ['stage:clear', 'stage:local5', 'nodeunit:one:load5']);
-  grunt.registerTask('_testWrong',
-    ['stage:clear', 'stage:doesNotExist', 'nodeunit:one:wrong']);
-  grunt.registerTask('_testClear',
-    ['stage:local', 'stage:clear', 'nodeunit:one:clear']);
-  grunt.registerTask('_testRequire',
-    ['stage:clear', 'stage:local', 'stage:require', 'nodeunit:one:require']);
-  grunt.registerTask('_testRequireKO',
-    ['stage:clear', 'stage:require', 'nodeunit:one:requireKO']);
-  grunt.registerTask('_testTask',
-    ['clean', 'stage:clear', 'stage:local', 'stage:testTask', 'nodeunit:one:task']);
-  grunt.registerTask('_testTaskNone',
-    ['stage:clear', 'stage:localNone', 'stage:testTask', 'nodeunit:one:taskNone']);
-  grunt.registerTask('_testStageTask',
-    ['stage:clear', 'stage:local:testTask', 'nodeunit:one:stageTask']);
-  grunt.registerTask('_testStageTaskTarget',
-    ['stage:clear', 'stage:local:testTask:other', 'nodeunit:one:stageTaskTarget']);
+  grunt.registerTask('_testLoad', [
+    'stage:clear',
+    'stage:local',
+    'nodeunit:stageLocalIsLoaded'
+  ]);
+  grunt.registerTask('_testLoadJSON5', [
+    'stage:clear',
+    'stage:local5',
+    'nodeunit:one:stageLocal5IsLoaded'
+  ]);
+  grunt.registerTask('_testWrong', [
+    'stage:clear',
+    'stage:doesNotExist',
+    'nodeunit:hasFailed',
+    'nodeunit:stageShouldBeEmpty',
+  ]);
+  grunt.registerTask('_testClear', [
+    'stage:local',
+    'stage:clear',
+    'nodeunit:stageShouldBeEmpty'
+  ]);
+  grunt.registerTask('_testRequire', [
+    'stage:clear',
+    'stage:local',
+    'stage:require',
+    'nodeunit:one:cmdIsRequire',
+    'nodeunit:stageLocalIsLoaded'
+  ]);
+  grunt.registerTask('_testRequireKO', [
+    'stage:clear',
+    'stage:require',
+    'nodeunit:hasFailed'
+  ]);
+  grunt.registerTask('_testTask', [
+    'clean',
+    'stage:clear',
+    'stage:local',
+    'stage:testTask',
+    'nodeunit:one:testTaskLocalWasRun'
+  ]);
+  grunt.registerTask('_testTaskNone', [
+    'stage:clear',
+    'stage:localNone',
+    'stage:testTask',
+    'nodeunit:one:noTaskWasRun'
+  ]);
+  grunt.registerTask('_testStageTask', [
+    'clean',
+    'stage:clear',
+    'stage:local:testTask',
+    'nodeunit:one:testTaskWasRun'
+  ]);
+  grunt.registerTask('_testStageTaskTarget', [
+    'clean',
+    'stage:clear',
+    'stage:local:testTask:other',
+    'nodeunit:one:testTaskOtherWasRun'
+  ]);
   grunt.registerTask('_testDefault', [
     'stage:clear',
     'stage:default:local',
-    'nodeunit:one:localLoaded',
+    'nodeunit:stageLocalIsLoaded',
     'stage:default:localNone',
-    'nodeunit:one:localLoaded'
+    'nodeunit:stageLocalIsLoaded'
+  ]);
+  grunt.registerTask('_testBlock', [
+    'stage:clear',
+    'stage:local',
+    'stage:block:localNone',
+    'nodeunit:stageLocalIsLoaded',
+    'stage:localNone',
+    'stage:block:localNone',
+    'nodeunit:hasFailed'
   ]);
 
-  grunt.registerTask('build', ['stage:testTask']);
-  grunt.registerTask('_testChain',
-    ['clean', 'stage:clear', 'stage:local', 'build', 'nodeunit:one:task']);
+  // let's test that stage is passed to sub-tasks
+  grunt.registerTask('subTask', ['stage:testTask']);
+  grunt.registerTask('_testChain', [
+    'clean',
+    'stage:clear',
+    'stage:local',
+    'subTask',
+    'nodeunit:one:testTaskLocalWasRun'
+  ]);
 
-  // Let's make a task to run all _test*
+  // Let's make a task to run all _test* tasks
   grunt.registerTask('testAll', 'runs all _test* tasks', function() {
     for (var name in grunt.task._tasks) {
       if (name.indexOf('_test') === 0) {
+        grunt.task.run('echo:**' + name + '**');
         grunt.task.run(name);
-        console.log(name);
       }
     }
   });
@@ -109,6 +164,10 @@ module.exports = function(grunt) {
   grunt.registerMultiTask('testTask', 'a test task to ensure grunt-stage runs properly', function() {
     grunt.log.writeln(this.target + ': ' + this.data);
     grunt.file.write(tmp + this.target, (new Date()).toString());
+  });
+
+  grunt.registerTask('echo', function(arg) {
+    grunt.log.writeln(arg['cyan']);
   });
 
   grunt.registerTask('test', [

@@ -99,7 +99,7 @@ The task will first try to recognize arg1 as a command, then as a stage, then as
 So **beware of name collisions**, don't name your stages with the same name as a command or task.
 
 #### stage:COMMAND
-The task recognizes 4 commands:
+The task recognizes 5 commands:
 - `stage:clear` removes all stage info. Useful if you're doing multiple deployments in a single task:
 `grunt.registerTask('deploy_tests', ['stage:test1', 'deploy', 'stage:clear', 'stage:test2', 'deploy']);`.
 - `stage:dump` prints out the currently loaded staging data. This can be used to debug complex tasks.
@@ -110,9 +110,17 @@ For example: `grunt.registerTask('deploy', ['stage:require', 'build', 'ftp-deplo
 and do nothing if a stage was already set.
 Use it for tasks that are mainly performed on a specific stage,
 yet are occasionally performed on another.
-For example: `grunt.registerTask('test', ['stage:default:local', 'build', 'run-test']);` 
+For example: `grunt.registerTask('test', ['stage:default:local', 'run-test']);` 
 allows you to run `grunt test` while developing,
-then `grunt stage:pre-prod:test` for pre-production environment testing.  
+then `grunt stage:pre-prod:test` for pre-production environment testing.
+- `stage:block:STAGE` will stop grunt processing if the specified stage is set.
+Use it to protect you from running dangerous tasks in inappropriate environments.
+For example, never run tests in production: `grunt.registerTask('test', ['stage:block:production', 'run-test']);`
+
+Finally, you can chain these commands as needed:
+want to run your tests by default in your local env, sometimes in pre-prod, never in production?
+Just do
+`grunt.registerTask('test', ['stage:default:local', 'stage:block:production', 'run-test']);`
 
 #### stage:STAGE
 Loads a stage, for later use.
@@ -186,6 +194,10 @@ Only use for task testing - see examples in the `test` folder.
 9. enjoy the love
 
 ## Release History
+__1.0.5__
+
+  * feature: added 'stage:block:STAGE'
+
 __1.0.4__
 
   * feature: added 'stage:default:STAGE'

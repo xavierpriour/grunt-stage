@@ -49,6 +49,7 @@ module.exports = function(grunt) {
       setTest(failKey, msg);
       if (options.test) {
         // do NOT fail in testing
+        grunt.verbose.error(('FAIL: ' + msg)['red']);
         return;
       }
       grunt.fail.fatal(msg);
@@ -89,6 +90,18 @@ module.exports = function(grunt) {
           var stg = grunt.config(stgKey);
           if (!stg || !stg.stage) {
             loadStage(defaultStage);
+          }
+        }
+      },
+      // fails IF specified stage is loaded
+      'block': {
+        public: true,
+        run: function(blockedStage) {
+          var stg = grunt.config(stgKey);
+          if (stg && stg.stage) {
+            if (stg.stage === blockedStage) {
+              failUnlessTest('stage ' + blockedStage + ' is blocked here, please use another one');
+            }
           }
         }
       },

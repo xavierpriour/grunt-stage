@@ -29,14 +29,18 @@ exports.stage = {
   },
 
   // stage:<stage> simple loading
-  testLoad5: function(test) {
-    test.expect(1);
-    var expected = grunt.file.readJSON('test/fixtures/local.json');
-    expected.stage = 'local5';
-    var actual = grunt.config('stg');
-    // we're not concerned with test debug info.
-    delete actual.test;
-    test.deepEqual(actual, expected, 'stage:<stage> should put file content in grunt.config(\'stg\').');
+  testTaskLocalWasRun: function(test) {
+    test.expect(3);
+    var expected = {
+      cmd: {
+        command: 'loadAndRun',
+        args: [null, 'testTask:local'],
+      }
+    };
+    var actual = grunt.config('stg.test');
+    test.deepEqual(actual, expected, 'stage:<task> should execute <task>:<stage> when it exists.');
+    test.equal(grunt.config('stg.stage'), 'local', "stage 'local' should be loaded");
+    test.ok(grunt.file.exists('tmp/local'), 'task testTask:local should have run and created file');
     test.done();
   },
 };
