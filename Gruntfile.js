@@ -63,7 +63,7 @@ module.exports = function(grunt) {
   // Due to the nature of the plugin, we can't put all tests into one task,
   // we need separate task paths to test all cases.
   grunt.registerTask('_testLoad',
-    ['stage:clear', 'stage:local', 'nodeunit:one:load']);
+    ['stage:clear', 'stage:local', 'nodeunit:one:localLoaded']);
   grunt.registerTask('_testLoadJSON5',
     ['stage:clear', 'stage:local5', 'nodeunit:one:load5']);
   grunt.registerTask('_testWrong',
@@ -82,6 +82,13 @@ module.exports = function(grunt) {
     ['stage:clear', 'stage:local:testTask', 'nodeunit:one:stageTask']);
   grunt.registerTask('_testStageTaskTarget',
     ['stage:clear', 'stage:local:testTask:other', 'nodeunit:one:stageTaskTarget']);
+  grunt.registerTask('_testDefault', [
+    'stage:clear',
+    'stage:default:local',
+    'nodeunit:one:localLoaded',
+    'stage:default:localNone',
+    'nodeunit:one:localLoaded'
+  ]);
 
   grunt.registerTask('build', ['stage:testTask']);
   grunt.registerTask('_testChain',

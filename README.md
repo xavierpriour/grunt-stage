@@ -99,13 +99,20 @@ The task will first try to recognize arg1 as a command, then as a stage, then as
 So **beware of name collisions**, don't name your stages with the same name as a command or task.
 
 #### stage:COMMAND
-The task recognizes 3 commands:
+The task recognizes 4 commands:
 - `stage:clear` removes all stage info. Useful if you're doing multiple deployments in a single task:
 `grunt.registerTask('deploy_tests', ['stage:test1', 'deploy', 'stage:clear', 'stage:test2', 'deploy']);`.
 - `stage:dump` prints out the currently loaded staging data. This can be used to debug complex tasks.
 - `stage:require` will stop grunt processing if no stage has been set when it is run.
 Use it before tasks that need stage data, to avoid any weird behavior.
 For example: `grunt.registerTask('deploy', ['stage:require', 'build', 'ftp-deploy']);`.
+- `stage:default:STAGE` will load the specified stage *if no stage was loaded yet*,
+and do nothing if a stage was already set.
+Use it for tasks that are mainly performed on a specific stage,
+yet are occasionally performed on another.
+For example: `grunt.registerTask('test', ['stage:default:local', 'build', 'run-test']);` 
+allows you to run `grunt test` while developing,
+then `grunt stage:pre-prod:test` for pre-production environment testing.  
 
 #### stage:STAGE
 Loads a stage, for later use.
@@ -179,6 +186,10 @@ Only use for task testing - see examples in the `test` folder.
 9. enjoy the love
 
 ## Release History
+__1.0.4__
+
+  * feature: added 'stage:default:STAGE'
+
 __1.0.3__
 
   * bugfix: 'stage:TASK' did not actually run the task.

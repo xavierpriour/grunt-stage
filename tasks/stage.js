@@ -80,24 +80,30 @@ module.exports = function(grunt) {
               'stage must be set before that point, fix it by calling stage:<stage> in your tasks before.'
             );
           }
+        },
+      },
+      // loads a stage IIF none loaded yet
+      'default': {
+        public: true,
+        run: function(defaultStage) {
+          var stg = grunt.config(stgKey);
+          if (!stg || !stg.stage) {
+            loadStage(defaultStage);
+          }
         }
       },
       'loadAndRun': {
         public: false,
         run: function(stage, toRun) {
+          var stageLoaded = false;
           if (stage) {
-            var data;
-            if (data = loadFile(stage)) {
-              for (var attrname in data) {
-                grunt.config([stgKey, attrname], data[attrname]);
-              }
-              grunt.config([stgKey, 'stage'], arg1);
-            } else {
-              failUnlessTest("unable to load requested stage '" + stage + "'.");
-            }
+            stageLoaded = loadStage(stage);
           }
           if (toRun) {
-            grunt.task.run(toRun);
+            // run the command BUT abort if stage load error
+            if (!stage || (stage && stageLoaded)) {
+              grunt.task.run(toRun);
+            }
           }
         }
       },
@@ -162,6 +168,25 @@ module.exports = function(grunt) {
         if (grunt.file.exists(fileStart + '.' + ext)) {
           return input[ext].read(fileStart + '.' + ext);
         }
+      }
+      return false;
+    };
+
+    var loadStage = function(stage) {
+      if (isStage(stage)) {
+        var data = loadFile(stage);
+        if (data) {
+          for (var attrname in data) {
+            grunt.config([stgKey, attrname], data[attrname]);
+          }
+          grunt.config([stgKey, 'stage'], stage);
+          return data;
+        } else {
+          failUnlessTest("unable to load requested stage '" + stage + "'.");
+        }
+      } else {
+        failUnlessTest('incorrect arguments supplied to stage task, "' +
+          stage + '" should be a stage (in folder "' + options.dir + '").');
       }
       return false;
     };
