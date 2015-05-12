@@ -89,7 +89,7 @@ For example:
 This is more useful to define "super-tasks" in your Gruntfile.
 
 Finally, the stage task also include a few commands that are useful when building task chains.
-They are `clear`, `dump`, and `require`, and are detailed below.
+They are `clear`, `dump`, `require`, `default`, `block`,  and are detailed below.
 
 ### Detailed syntax
 
