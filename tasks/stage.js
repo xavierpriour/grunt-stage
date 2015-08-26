@@ -49,7 +49,7 @@ module.exports = function(grunt) {
       setTest(failKey, msg);
       if (options.test) {
         // do NOT fail in testing
-        grunt.verbose.error(('FAIL: ' + msg)['red']);
+        grunt.verbose.error(('FAIL: ' + msg).red);
         return;
       }
       grunt.fail.fatal(msg);

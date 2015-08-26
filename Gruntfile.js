@@ -44,7 +44,7 @@ module.exports = function(grunt) {
     // Configuration to be run (and then tested).
     stage: {
       options: {
-        dir:'test/fixtures',
+        dir: 'test/fixtures',
         test: true,
       },
     },
@@ -167,7 +167,7 @@ module.exports = function(grunt) {
   });
 
   grunt.registerTask('echo', function(arg) {
-    grunt.log.writeln(arg['cyan']);
+    grunt.log.writeln(arg.cyan);
   });
 
   grunt.registerTask('test', [
